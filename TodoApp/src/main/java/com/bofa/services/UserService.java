@@ -1,5 +1,6 @@
 package com.bofa.services;
 
+import com.bofa.repos.CourseRepository;
 import com.bofa.repos.UserRepository;
 import com.bofa.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,13 @@ public class UserService {
 
     private final UserRepository userRepo;
 
+    private final CourseRepository courseRepo;
+
 
     @Autowired
-    public UserService(UserRepository userRepo) {
+    public UserService(UserRepository userRepo, CourseRepository courseRepo) {
         this.userRepo = userRepo;
+        this.courseRepo = courseRepo;
     }
 
     public User login(String username, String password) {
@@ -34,6 +38,23 @@ public class UserService {
         User savedUser = userRepo.save(user);
         return savedUser;
     }
+
+    public void addCourseToUser(String username, int courseId){
+        User u = userRepo.findUserByUsername(username).get();
+
+        System.out.println(u.getCourses());
+        u.getCourses().add(courseRepo.findById(courseId).get());
+        userRepo.save(u);
+    }
+
+    public void removeCourseFromUser(String username, int courseId){
+        User u = userRepo.findUserByUsername(username).get();
+
+        System.out.println(u.getCourses());
+        u.getCourses().remove(courseRepo.findById(courseId).get());
+        userRepo.save(u);
+    }
+
 
 
 }
