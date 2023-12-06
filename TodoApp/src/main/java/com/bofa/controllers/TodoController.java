@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/todo")
+@CrossOrigin(allowCredentials = "true")
 public class TodoController {
 
     private final TodoService todoService;
@@ -24,7 +25,6 @@ public class TodoController {
     public ResponseEntity<Todo> createTodo(@RequestBody Todo todo,
                                            @CookieValue(name = "username", defaultValue = "no-username-provided") String username){
 
-        System.out.println(username);
         if (username.equals("no-username-provided")){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -43,5 +43,20 @@ public class TodoController {
         }
 
         return new ResponseEntity<>(todoService.getAllTodosByOwner(username), HttpStatus.OK);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<Todo> updateTodo(@PathVariable int id,
+                                            @RequestBody Todo todo,
+                                           @CookieValue(name = "username", defaultValue = "no-username-provided") String username){
+
+        if (username.equals("no-username-provided")){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        Todo savedTodo = todoService.updateTodo(id, todo, username);
+        if (savedTodo != null){
+            return new ResponseEntity<>(savedTodo, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

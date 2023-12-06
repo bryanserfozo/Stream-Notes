@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(allowCredentials = "true")
 public class UserController {
 
     private final UserService userServ;
@@ -29,7 +30,9 @@ public class UserController {
 
         if (returnedUser != null){
             ResponseCookie usernameCookie = ResponseCookie.from("username", returnedUser.getUsername())
+                    .secure(true)
                     .httpOnly(true)
+                    .sameSite("None")
                     .path("/")
                     .maxAge(600)
                     .build();
@@ -41,13 +44,23 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody User u){
+        User returnedUser = userServ.register(u);
 
-    @PutMapping
-    public void addCourse(){
-        userServ.addCourseToUser("bryanserfozo", 1);
-    }
-    @DeleteMapping
-    public void removeCourse(){
-        userServ.removeCourseFromUser("bryanserfozo", 1);
+        if (returnedUser != null){
+            ResponseCookie usernameCookie = ResponseCookie.from("username", returnedUser.getUsername())
+                    .secure(true)
+                    .httpOnly(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(600)
+                    .build();
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, usernameCookie.toString())
+                    .body(returnedUser);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

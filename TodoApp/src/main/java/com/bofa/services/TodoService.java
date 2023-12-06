@@ -42,6 +42,20 @@ public class TodoService {
         return new ArrayList<>();
     }
 
+    public Todo updateTodo(int id, Todo todo, String username){
+        Optional<Todo> returnedTodo = todoRepo.findById(id);
+        Optional<User> returnedUser = userRepo.findUserByUsername(username);
+
+        if (returnedTodo.isPresent() && returnedUser.isPresent()){
+            Todo t = returnedTodo.get();
+            t.setComplete(todo.isComplete());
+            return todoRepo.save(t);
+
+        }
+        return null;
+
+    }
+
 
 
 }

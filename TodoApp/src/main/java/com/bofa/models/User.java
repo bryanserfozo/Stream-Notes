@@ -18,8 +18,6 @@ public class User {
 
     private String password;
 
-    @ManyToMany(mappedBy = "users")
-    private List<Courses> courses;
 
     public User() {
     }
@@ -64,14 +62,6 @@ public class User {
         this.password = password;
     }
 
-    public List<Courses> getCourses() {
-        return courses;
-    }
-
-    public void setCourses(List<Courses> courses) {
-        this.courses = courses;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -91,7 +81,6 @@ public class User {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", courses=" + courses +
                 '}';
     }
 }
